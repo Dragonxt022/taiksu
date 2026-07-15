@@ -6,6 +6,7 @@ async function sessaoData(req, res, next) {
 
         Object.assign(res.locals, authService.mapUserToLocals(userData));
         res.locals.userToken = req.session.token || null;
+        res.locals.user = userData; // objeto completo do SSO (cpf, telefone, permissões, unidade...)
 
         next();
     } catch (err) {

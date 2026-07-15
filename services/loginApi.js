@@ -38,4 +38,27 @@ function logout(token) {
   return request('/api/logout', token, { method: 'POST' });
 }
 
-module.exports = { request, getMe, logout, LoginApiError };
+function updateMe(token, data) {
+  return request('/api/user/profile', token, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+}
+
+function regeneratePin(token) {
+  return request('/api/user/regenerate-pin', token, { method: 'POST' });
+}
+
+function changePassword(token, novaSenha) {
+  return request('/api/user/change-password', token, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      'nova-senha': novaSenha,
+      'nova-senha_confirmation': novaSenha,
+    }),
+  });
+}
+
+module.exports = { request, getMe, logout, updateMe, regeneratePin, changePassword, LoginApiError };

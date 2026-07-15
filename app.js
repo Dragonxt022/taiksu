@@ -62,6 +62,7 @@ app.use((req, res, next) => {
   res.locals.userToken = null;
   res.locals.unidade_id = null;
   res.locals.userPin = null;
+  res.locals.user = null;
   next();
 });
 

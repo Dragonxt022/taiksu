@@ -14,4 +14,10 @@ function index(req, res) {
   });
 }
 
-module.exports = { index };
+function editar(req, res) {
+  res.render('editar', {
+    title: 'Taiksu - Editar Perfil',
+  });
+}
+
+module.exports = { index, editar };

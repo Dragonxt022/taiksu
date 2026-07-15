@@ -1,3 +1,4 @@
 module.exports = {
-    sessaoData: require('./sessaoData')
+    sessaoData: require('./sessaoData'),
+    requireAuth: require('./requireAuth'),
 }

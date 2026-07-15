@@ -16,7 +16,7 @@
         <p class="text-sm text-gray-500"><%= userEmail %></p>
       </div>
     </div>
-    <a href="https://login.taiksu.com.br/perfil" class="w-9 h-9 shrink-0 rounded-full bg-green-50 hover:bg-green-100 flex items-center justify-center transition-colors" title="Editar perfil">
+    <a href="/editar" class="w-9 h-9 shrink-0 rounded-full bg-green-50 hover:bg-green-100 flex items-center justify-center transition-colors" title="Editar perfil">
       <svg class="w-4 h-4 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /></svg>
     </a>
   </div>
@@ -46,22 +46,22 @@
   </div>
 
   <!-- Visualizar PIN -->
-  <button type="button" id="pin-toggle" class="w-full text-left bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center justify-between hover:bg-gray-50 transition-colors">
+  <button type="button" id="pin-abrir" class="w-full text-left bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer">
     <div class="flex items-center gap-3 text-gray-700 font-medium">
       <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2" /><circle cx="12" cy="12" r="2" /><circle cx="19" cy="12" r="2" /></svg>
-      <span id="pin-label">Visualizar meu PIN</span>
+      Visualizar meu PIN
     </div>
-    <svg id="pin-chevron" class="w-5 h-5 text-green-600 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+    <svg class="w-5 h-5 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
   </button>
 
   <!-- Alterar senha -->
-  <a href="https://login.taiksu.com.br/perfil" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center justify-between hover:bg-gray-50 transition-colors">
+  <button type="button" id="senha-abrir" class="w-full text-left bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer">
     <div class="flex items-center gap-3 text-gray-700 font-medium">
       <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /></svg>
       Alterar senha
     </div>
     <svg class="w-5 h-5 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
-  </a>
+  </button>
 
   <!-- Mostrar aplicativos mais acessados -->
   <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center justify-between">
@@ -69,27 +69,206 @@
       <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
       Mostrar aplicativos mais acessados
     </div>
-    <button type="button" id="apps-toggle" role="switch" aria-checked="true" class="relative inline-flex h-7 w-12 items-center rounded-full bg-green-500 transition-colors shrink-0">
+    <button type="button" id="apps-toggle" role="switch" aria-checked="true" class="relative inline-flex h-7 w-12 items-center rounded-full bg-green-500 transition-colors shrink-0 cursor-pointer">
       <span class="inline-block h-5 w-5 translate-x-6 transform rounded-full bg-white shadow transition-transform"></span>
     </button>
   </div>
 
 </div>
 
+<!-- Modal: Meu PIN -->
+<div id="pin-modal" role="dialog" aria-modal="true" aria-labelledby="pin-modal-titulo" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
+  <div class="bg-white rounded-2xl shadow-xl border border-gray-100 w-full max-w-sm p-8 flex flex-col items-center gap-6">
+    <h3 id="pin-modal-titulo" class="text-lg font-semibold text-gray-500">Meu PIN</h3>
+    <p id="pin-valor" class="text-7xl font-bold text-green-600 tracking-wider"><%= userPin %></p>
+    <div class="flex flex-row gap-3 w-full justify-center">
+      <button type="button" id="pin-fechar" class="px-8 py-2.5 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-600 font-medium transition-colors cursor-pointer">Fechar</button>
+      <button type="button" id="pin-regenerar" class="px-8 py-2.5 rounded-full bg-green-500 hover:bg-green-600 disabled:opacity-60 text-white font-semibold transition-colors cursor-pointer">Regenerar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Alterar senha -->
+<div id="senha-modal" role="dialog" aria-modal="true" aria-labelledby="senha-modal-titulo" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
+  <div class="bg-white rounded-2xl shadow-xl border border-gray-100 w-full max-w-md p-8 flex flex-col gap-5">
+    <h3 id="senha-modal-titulo" class="text-xl font-semibold text-gray-500">Alterar minha senha</h3>
+
+    <form id="senha-form" class="flex flex-col gap-4">
+      <div>
+        <label for="nova-senha" class="block text-sm text-gray-700 mb-1.5">Nova senha</label>
+        <div class="relative">
+          <input id="nova-senha" name="newPassword" type="password" required minlength="6" autocomplete="new-password"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 pr-10 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-green-500 transition-all" />
+          <button type="button" class="ver-senha absolute inset-y-0 right-3 flex items-center text-green-600 cursor-pointer" data-alvo="nova-senha" aria-label="Mostrar senha">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+          </button>
+        </div>
+        <p class="campo-erro hidden text-xs text-red-600 mt-1" data-field="newPassword"></p>
+      </div>
+
+      <div>
+        <label for="confirmar-senha" class="block text-sm text-gray-700 mb-1.5">Confirmar nova senha</label>
+        <div class="relative">
+          <input id="confirmar-senha" name="confirmPassword" type="password" required minlength="6" autocomplete="new-password"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 pr-10 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-green-500 transition-all" />
+          <button type="button" class="ver-senha absolute inset-y-0 right-3 flex items-center text-green-600 cursor-pointer" data-alvo="confirmar-senha" aria-label="Mostrar senha">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+          </button>
+        </div>
+        <p class="campo-erro hidden text-xs text-red-600 mt-1" data-field="confirmPassword"></p>
+      </div>
+
+      <div class="flex flex-row gap-3 justify-center mt-2">
+        <button type="button" id="senha-cancelar" class="px-8 py-2.5 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-600 font-medium transition-colors cursor-pointer">Cancelar</button>
+        <button type="submit" id="senha-salvar" class="px-8 py-2.5 rounded-full bg-green-500 hover:bg-green-600 disabled:opacity-60 text-white font-semibold transition-colors cursor-pointer">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 px-5 py-3 rounded-full text-sm font-medium text-white shadow-lg z-50"></div>
+
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    const pinToggle = document.getElementById('pin-toggle');
-    const pinLabel = document.getElementById('pin-label');
-    const pinChevron = document.getElementById('pin-chevron');
-    const pin = <%- JSON.stringify(userPin || '') %>;
-    let pinVisible = false;
+    const toast = document.getElementById('toast');
 
-    pinToggle.addEventListener('click', function () {
-      pinVisible = !pinVisible;
-      pinLabel.textContent = pinVisible ? ('PIN: ' + pin) : 'Visualizar meu PIN';
-      pinChevron.style.transform = pinVisible ? 'rotate(90deg)' : '';
+    function showToast(message, ok) {
+      toast.textContent = message;
+      toast.classList.remove('hidden', 'bg-green-600', 'bg-red-600');
+      toast.classList.add(ok ? 'bg-green-600' : 'bg-red-600');
+      setTimeout(() => toast.classList.add('hidden'), 4000);
+    }
+
+    function abrirModal(modal) {
+      modal.classList.remove('hidden');
+      const foco = modal.querySelector('input, button');
+      if (foco) foco.focus();
+    }
+
+    function fecharModal(modal) {
+      modal.classList.add('hidden');
+    }
+
+    // ---------- Modal PIN ----------
+    const pinModal = document.getElementById('pin-modal');
+    const pinValor = document.getElementById('pin-valor');
+    const pinRegenerar = document.getElementById('pin-regenerar');
+
+    document.getElementById('pin-abrir').addEventListener('click', () => abrirModal(pinModal));
+    document.getElementById('pin-fechar').addEventListener('click', () => fecharModal(pinModal));
+
+    pinRegenerar.addEventListener('click', async function () {
+      pinRegenerar.disabled = true;
+      pinRegenerar.textContent = 'Gerando...';
+      try {
+        const res = await fetch('/api/v1/users/me/pin/regenerate', { method: 'POST' });
+        const body = await res.json().catch(() => null);
+        if (res.ok && body && body.pin) {
+          pinValor.textContent = body.pin;
+          showToast('PIN regenerado com sucesso!', true);
+        } else {
+          showToast((body && body.error && body.error.message) || 'Erro ao regenerar o PIN.', false);
+        }
+      } catch (err) {
+        showToast('Falha de conexão. Tente novamente.', false);
+      } finally {
+        pinRegenerar.disabled = false;
+        pinRegenerar.textContent = 'Regenerar';
+      }
     });
 
+    // ---------- Modal Alterar senha ----------
+    const senhaModal = document.getElementById('senha-modal');
+    const senhaForm = document.getElementById('senha-form');
+    const senhaSalvar = document.getElementById('senha-salvar');
+
+    document.getElementById('senha-abrir').addEventListener('click', () => abrirModal(senhaModal));
+    document.getElementById('senha-cancelar').addEventListener('click', function () {
+      senhaForm.reset();
+      limparErros();
+      fecharModal(senhaModal);
+    });
+
+    // Olhinho de mostrar/ocultar senha
+    document.querySelectorAll('.ver-senha').forEach(botao => {
+      botao.addEventListener('click', function () {
+        const input = document.getElementById(botao.dataset.alvo);
+        input.type = input.type === 'password' ? 'text' : 'password';
+      });
+    });
+
+    function limparErros() {
+      senhaModal.querySelectorAll('.campo-erro').forEach(el => {
+        el.classList.add('hidden');
+        el.textContent = '';
+      });
+    }
+
+    function mostrarErro(campo, mensagem) {
+      const el = senhaModal.querySelector(`.campo-erro[data-field="${campo}"]`);
+      if (el) {
+        el.textContent = mensagem;
+        el.classList.remove('hidden');
+      }
+    }
+
+    senhaForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      limparErros();
+
+      const newPassword = senhaForm.newPassword.value;
+      const confirmPassword = senhaForm.confirmPassword.value;
+
+      if (newPassword.length < 6) {
+        return mostrarErro('newPassword', 'Mínimo de 6 caracteres');
+      }
+      if (newPassword !== confirmPassword) {
+        return mostrarErro('confirmPassword', 'As senhas não conferem');
+      }
+
+      senhaSalvar.disabled = true;
+      senhaSalvar.textContent = 'Salvando...';
+
+      try {
+        const res = await fetch('/api/v1/users/me/password', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ newPassword, confirmPassword }),
+        });
+
+        if (res.status === 204) {
+          senhaForm.reset();
+          fecharModal(senhaModal);
+          showToast('Senha alterada com sucesso!', true);
+        } else {
+          const body = await res.json().catch(() => null);
+          const error = body && body.error ? body.error : {};
+          Object.entries(error.fields || {}).forEach(([campo, msg]) => mostrarErro(campo, Array.isArray(msg) ? msg[0] : msg));
+          showToast(error.message || 'Erro ao alterar a senha.', false);
+        }
+      } catch (err) {
+        showToast('Falha de conexão. Tente novamente.', false);
+      } finally {
+        senhaSalvar.disabled = false;
+        senhaSalvar.textContent = 'Salvar';
+      }
+    });
+
+    // Fechar modais com Esc ou clique no fundo
+    [pinModal, senhaModal].forEach(modal => {
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) fecharModal(modal);
+      });
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        fecharModal(pinModal);
+        fecharModal(senhaModal);
+      }
+    });
+
+    // ---------- Toggle apps mais acessados ----------
     const appsToggle = document.getElementById('apps-toggle');
     appsToggle.addEventListener('click', function () {
       const isOn = appsToggle.getAttribute('aria-checked') === 'true';
