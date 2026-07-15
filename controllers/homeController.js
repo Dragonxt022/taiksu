@@ -1,3 +1,9 @@
+const profileService = require('../services/profileService');
+
+// Mesmas regras dos seletores da página de perfil do SSO.
+const UNIDADE_ROLES = ['Desenvolvedor', 'Franqueadora', 'Recursos Humanos'];
+const CARGO_ROLES = ['Desenvolvedor'];
+
 const getExpressVersion = () => {
   try {
     const pkg = require('express/package.json');
@@ -7,10 +13,22 @@ const getExpressVersion = () => {
   }
 };
 
-function index(req, res) {
+async function index(req, res) {
+  const cargo = res.locals.userCargo;
+  const podeTrocarUnidade = UNIDADE_ROLES.includes(cargo);
+  const podeTrocarCargo = CARGO_ROLES.includes(cargo);
+
+  // Carrega as listas em paralelo; se falhar, o campo vira somente leitura.
+  const [unidades, cargos] = await Promise.all([
+    podeTrocarUnidade ? profileService.getUnidades(req.session).catch(() => null) : null,
+    podeTrocarCargo ? profileService.getRoles(req.session).catch(() => null) : null,
+  ]);
+
   res.render('index', {
     title: 'Taiksu - Perfil',
     expressVersion: getExpressVersion(),
+    unidades: Array.isArray(unidades) ? unidades : null,
+    cargos: Array.isArray(cargos) ? cargos : null,
   });
 }
 

@@ -9,7 +9,17 @@
 
   <!-- Avatar -->
   <div class="flex justify-center my-4">
-    <img src="<%= userFoto %>" class="w-24 h-24 rounded-full object-cover bg-gray-100 shadow-md" alt="<%= userNome %>" />
+    <div class="relative">
+      <img id="avatar-img" src="<%= userFoto %>" class="w-24 h-24 rounded-full object-cover bg-gray-100 shadow-md" alt="<%= userNome %>" />
+      <div id="avatar-spinner" class="hidden absolute inset-0 rounded-full bg-black/40 flex items-center justify-center">
+        <svg class="w-8 h-8 text-white animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.2-8.56" /></svg>
+      </div>
+      <button type="button" id="avatar-botao" title="Alterar foto"
+        class="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center shadow-md transition-colors cursor-pointer">
+        <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z" /><circle cx="12" cy="13" r="3" /></svg>
+      </button>
+      <input type="file" id="avatar-input" accept="image/png,image/jpeg,image/webp" class="hidden" />
+    </div>
   </div>
 
   <!-- Cargo -->
@@ -116,6 +126,51 @@
         }
       });
     }
+
+    // ---------- Upload de foto de perfil ----------
+    const avatarImg = document.getElementById('avatar-img');
+    const avatarInput = document.getElementById('avatar-input');
+    const avatarSpinner = document.getElementById('avatar-spinner');
+
+    document.getElementById('avatar-botao').addEventListener('click', () => avatarInput.click());
+
+    avatarInput.addEventListener('change', async function () {
+      const file = avatarInput.files[0];
+      if (!file) return;
+
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('Envie uma imagem de até 5MB.', false);
+        avatarInput.value = '';
+        return;
+      }
+
+      const fotoAnterior = avatarImg.src;
+      avatarImg.src = URL.createObjectURL(file); // preview otimista
+      avatarSpinner.classList.remove('hidden');
+
+      const formData = new FormData();
+      formData.append('avatar', file);
+
+      try {
+        const res = await fetch('/api/v1/users/me/avatar', { method: 'POST', body: formData });
+        const body = await res.json().catch(() => null);
+
+        if (res.ok && body && body.avatarUrl) {
+          avatarImg.src = body.avatarUrl;
+          showToast('Foto atualizada com sucesso!', true);
+        } else {
+          avatarImg.src = fotoAnterior; // rollback
+          const error = body && body.error ? body.error : {};
+          showToast(error.message || 'Erro ao atualizar a foto.', false);
+        }
+      } catch (err) {
+        avatarImg.src = fotoAnterior;
+        showToast('Falha de conexão. Tente novamente.', false);
+      } finally {
+        avatarSpinner.classList.add('hidden');
+        avatarInput.value = '';
+      }
+    });
 
     form.addEventListener('submit', async function (e) {
       e.preventDefault();

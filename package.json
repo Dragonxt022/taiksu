@@ -26,6 +26,7 @@
     "express-session": "^1.19.0",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
+    "multer": "^2.2.0",
     "mysql2": "^3.23.0",
     "pg": "^8.22.0",
     "pg-hstore": "^2.3.4",

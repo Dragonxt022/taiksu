@@ -27,10 +27,17 @@
       <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7h20M4 7v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V7M9 21v-6h6v6M4 7l1.5-4h13L20 7" /></svg>
       Unidade
     </div>
+    <% if (typeof unidades !== 'undefined' && unidades) { %>
+    <select id="unidade-select" class="border border-gray-200 rounded-lg pl-3 pr-2 py-2 text-sm text-gray-700 bg-white outline-none focus:ring-2 focus:ring-green-500 cursor-pointer">
+      <% unidades.forEach(function (u) { %>
+      <option value="<%= u.id %>" <%= unidade_id == u.id ? 'selected' : '' %>><%= u.cidade %></option>
+      <% }); %>
+    </select>
+    <% } else { %>
     <div class="flex items-center gap-1.5 border border-gray-200 rounded-lg pl-4 pr-3 py-2 text-sm text-gray-700 bg-white">
       <%= userCidade %>
-      <svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
     </div>
+    <% } %>
   </div>
 
   <!-- Cargo -->
@@ -39,10 +46,17 @@
       <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="12" cy="10" r="2.5" /><path d="M7 16.5c1-1.6 2.7-2.5 5-2.5s4 .9 5 2.5" /></svg>
       Cargo
     </div>
+    <% if (typeof cargos !== 'undefined' && cargos) { %>
+    <select id="cargo-select" class="border border-gray-200 rounded-lg pl-3 pr-2 py-2 text-sm text-gray-700 bg-white outline-none focus:ring-2 focus:ring-green-500 cursor-pointer">
+      <% cargos.forEach(function (c) { %>
+      <option value="<%= c.id %>" <%= userGrupo == c.id ? 'selected' : '' %>><%= c.name.charAt(0).toUpperCase() + c.name.slice(1) %></option>
+      <% }); %>
+    </select>
+    <% } else { %>
     <div class="flex items-center gap-1.5 border border-gray-200 rounded-lg pl-4 pr-3 py-2 text-sm text-gray-700 bg-white">
       <%= userCargo %>
-      <svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
     </div>
+    <% } %>
   </div>
 
   <!-- Visualizar PIN -->
@@ -267,6 +281,42 @@
         fecharModal(senhaModal);
       }
     });
+
+    // ---------- Seletores de Unidade e Cargo ----------
+    function ligarSeletor(id, url, campo) {
+      const select = document.getElementById(id);
+      if (!select) return;
+
+      select.addEventListener('change', async function () {
+        const valorAnterior = select.dataset.anterior || select.value;
+        select.disabled = true;
+        try {
+          const res = await fetch(url, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ [campo]: Number(select.value) }),
+          });
+          const body = await res.json().catch(() => null);
+          if (res.ok) {
+            select.dataset.anterior = select.value;
+            showToast((body && body.message) || 'Atualizado com sucesso!', true);
+            setTimeout(() => window.location.reload(), 800);
+          } else {
+            select.value = valorAnterior;
+            showToast((body && body.error && body.error.message) || 'Erro ao atualizar.', false);
+          }
+        } catch (err) {
+          select.value = valorAnterior;
+          showToast('Falha de conexão. Tente novamente.', false);
+        } finally {
+          select.disabled = false;
+        }
+      });
+      select.dataset.anterior = select.value;
+    }
+
+    ligarSeletor('unidade-select', '/api/v1/users/me/unidade', 'unidade_id');
+    ligarSeletor('cargo-select', '/api/v1/users/me/cargo', 'role_id');
 
     // ---------- Toggle apps mais acessados ----------
     const appsToggle = document.getElementById('apps-toggle');

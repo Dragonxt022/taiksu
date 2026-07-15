@@ -6,10 +6,11 @@ function handleLoginApiError(res, err, fallbackMessage) {
     let body = null;
     try { body = JSON.parse(err.message); } catch { /* resposta não-JSON */ }
 
+    const codes = { 401: 'UNAUTHENTICATED', 403: 'FORBIDDEN' };
     return res.status(err.status).json({
       error: {
-        code: err.status === 401 ? 'UNAUTHENTICATED' : 'VALIDATION_ERROR',
-        message: (body && body.message) || fallbackMessage,
+        code: codes[err.status] || 'VALIDATION_ERROR',
+        message: (body && (body.message || body.error)) || fallbackMessage,
         fields: (body && body.errors) || undefined,
       },
     });
@@ -89,4 +90,75 @@ async function regeneratePin(req, res) {
   }
 }
 
-module.exports = { me, updateMe, changePassword, regeneratePin };
+/* POST /api/v1/users/me/avatar (multipart, campo "avatar") */
+async function updateAvatar(req, res) {
+  if (!req.file) {
+    return res.status(400).json({
+      error: {
+        code: 'VALIDATION_ERROR',
+        message: 'Envie uma imagem no campo "avatar".',
+        fields: { avatar: 'Arquivo obrigatório' },
+      },
+    });
+  }
+
+  try {
+    const result = await profileService.updateAvatar(req.session, req.file);
+    res.json({ avatarUrl: result.avatarUrl });
+  } catch (err) {
+    handleLoginApiError(res, err, 'Erro ao atualizar a foto de perfil.');
+  }
+}
+
+/* PATCH /api/v1/users/me/unidade */
+async function updateUnidade(req, res) {
+  const { unidade_id } = req.body || {};
+  if (!unidade_id) {
+    return res.status(400).json({
+      error: { code: 'VALIDATION_ERROR', message: 'Informe a unidade.', fields: { unidade_id: 'Obrigatório' } },
+    });
+  }
+
+  try {
+    const result = await profileService.updateUnidade(req.session, unidade_id);
+    res.json(result);
+  } catch (err) {
+    handleLoginApiError(res, err, 'Erro ao trocar de unidade.');
+  }
+}
+
+/* PATCH /api/v1/users/me/cargo */
+async function updateRole(req, res) {
+  const { role_id } = req.body || {};
+  if (!role_id) {
+    return res.status(400).json({
+      error: { code: 'VALIDATION_ERROR', message: 'Informe o cargo.', fields: { role_id: 'Obrigatório' } },
+    });
+  }
+
+  try {
+    const result = await profileService.updateRole(req.session, role_id);
+    res.json(result);
+  } catch (err) {
+    handleLoginApiError(res, err, 'Erro ao trocar de cargo.');
+  }
+}
+
+/* POST /api/v1/users/me/permissions/toggle */
+async function togglePermission(req, res) {
+  const { permission } = req.body || {};
+  if (!permission) {
+    return res.status(400).json({
+      error: { code: 'VALIDATION_ERROR', message: 'Informe a permissão.', fields: { permission: 'Obrigatório' } },
+    });
+  }
+
+  try {
+    const result = await profileService.togglePermission(req.session, permission);
+    res.json({ status: result.status });
+  } catch (err) {
+    handleLoginApiError(res, err, 'Erro ao alterar a permissão.');
+  }
+}
+
+module.exports = { me, updateMe, changePassword, regeneratePin, updateAvatar, updateUnidade, updateRole, togglePermission };

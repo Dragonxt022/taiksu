@@ -61,4 +61,53 @@ function changePassword(token, novaSenha) {
   });
 }
 
-module.exports = { request, getMe, logout, updateMe, regeneratePin, changePassword, LoginApiError };
+// Envia a foto de perfil como multipart/form-data (file vem do multer, em memória).
+function uploadPhoto(token, file) {
+  const form = new FormData();
+  form.append('foto', new Blob([file.buffer], { type: file.mimetype }), file.originalname);
+  // Sem Content-Type manual: o fetch define o boundary do multipart sozinho.
+  return request('/api/user/profile/photo', token, { method: 'POST', body: form });
+}
+
+function updateUnidade(token, unidadeId) {
+  return request('/api/user/profile/unidade', token, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ unidade_id: unidadeId }),
+  });
+}
+
+function updateRole(token, roleId) {
+  return request('/api/user/profile/role', token, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ role_id: roleId }),
+  });
+}
+
+function getRoles(token) {
+  return request('/api/user/profile/roles', token);
+}
+
+function getPermissions(token) {
+  return request('/api/user/profile/permissions', token);
+}
+
+function togglePermission(token, permissionName) {
+  return request('/api/user/profile/toggle-permission', token, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ permission: permissionName }),
+  });
+}
+
+function getUnidades(token) {
+  return request('/api/infor-unidades', token);
+}
+
+module.exports = {
+  request, getMe, logout, updateMe, regeneratePin, changePassword,
+  uploadPhoto, updateUnidade, updateRole, getRoles, getUnidades,
+  getPermissions, togglePermission,
+  LoginApiError,
+};

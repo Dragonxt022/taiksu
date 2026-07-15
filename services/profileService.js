@@ -48,4 +48,72 @@ async function changePassword(session, novaSenha) {
   return loginApi.changePassword(session.token, novaSenha);
 }
 
-module.exports = { getProfile, updateProfile, regeneratePin, changePassword, pickEditableFields };
+async function updateAvatar(session, file) {
+  const result = await loginApi.uploadPhoto(session.token, file);
+
+  if (result && result.avatarUrl) {
+    session.foto = result.avatarUrl;
+    if (session.user) session.user.foto = result.avatarUrl;
+    await new Promise((resolve, reject) =>
+      session.save(err => err ? reject(err) : resolve())
+    );
+  }
+
+  return result;
+}
+
+async function updateUnidade(session, unidadeId) {
+  const result = await loginApi.updateUnidade(session.token, unidadeId);
+
+  if (result && result.unidade) {
+    session.unidade_id = result.unidade.id;
+    session.cidade = result.unidade.cidade;
+    session.estado = result.unidade.estado;
+    if (session.user) session.user.unidade = result.unidade;
+    await new Promise((resolve, reject) =>
+      session.save(err => err ? reject(err) : resolve())
+    );
+  }
+
+  return result;
+}
+
+async function updateRole(session, roleId) {
+  const result = await loginApi.updateRole(session.token, roleId);
+
+  if (result && result.role) {
+    session.grupo_id = result.role.id;
+    if (session.user) {
+      session.user.grupo_id = result.role.id;
+      session.user.grupo_nome = result.role.name;
+    }
+    await new Promise((resolve, reject) =>
+      session.save(err => err ? reject(err) : resolve())
+    );
+  }
+
+  return result;
+}
+
+function getUnidades(session) {
+  return loginApi.getUnidades(session.token);
+}
+
+function getRoles(session) {
+  return loginApi.getRoles(session.token);
+}
+
+function getPermissions(session) {
+  return loginApi.getPermissions(session.token);
+}
+
+function togglePermission(session, permissionName) {
+  return loginApi.togglePermission(session.token, permissionName);
+}
+
+module.exports = {
+  getProfile, updateProfile, regeneratePin, changePassword,
+  updateAvatar, updateUnidade, updateRole, getUnidades, getRoles,
+  getPermissions, togglePermission,
+  pickEditableFields,
+};
