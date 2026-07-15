@@ -8,7 +8,6 @@ const db = require('./models');
 
 const indexRouter = require('./routes');
 const apiRouter = require('./routes/api');
-const createUserRoutes = require('./routes/users');
 
 const app = express();
 
@@ -30,7 +29,6 @@ db.sequelize.authenticate()
 
 // API Routes
 app.use('/api', apiRouter);
-app.use('/api/users', createUserRoutes(db));
 
 // View routes
 app.use('/', indexRouter);

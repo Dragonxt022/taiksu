@@ -13,7 +13,7 @@ const getExpressVersion = () => {
 /* GET home page. */
 router.get('/', (req, res, next) => {
   res.render('index', {
-    title: 'Taiksu API',
+    title: 'TAIKSU - Perfil',
     expressVersion: getExpressVersion(),
   });
 });
