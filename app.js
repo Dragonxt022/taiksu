@@ -4,6 +4,7 @@ var path = require('path');
 var cors = require('cors');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
+var SequelizeStore = require('connect-session-sequelize')(session.Store);
 var expressLayouts = require('express-ejs-layouts');
 var logger = require('morgan');
 var createError = require('http-errors');
@@ -37,7 +38,11 @@ app.use(logger(process.env.LOG_LEVEL || 'dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+var sessionStore = new SequelizeStore({ db: db.sequelize });
+sessionStore.sync();
+
 app.use(session({
+  store: sessionStore,
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
