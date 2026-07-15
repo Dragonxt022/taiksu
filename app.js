@@ -10,11 +10,7 @@ var logger = require('morgan');
 var createError = require('http-errors');
 var db = require('./models');
 
-var indexRouter = require('./routes');
-var apiRouter = require('./routes/api');
-var callbackRouter = require('./routes/callback');
-
-const { sessaoData } = require('./middlewares');
+var routes = require('./routes');
 
 var app = express();
 
@@ -58,7 +54,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use((req, res, next) => {
   res.locals.userFoto = null;
   res.locals.userNome = null;
+  res.locals.userEmail = null;
   res.locals.userGrupo = null;
+  res.locals.userCargo = null;
   res.locals.userCidade = null;
   res.locals.user_id = null;
   res.locals.userToken = null;
@@ -72,14 +70,8 @@ db.sequelize.authenticate()
   .then(() => console.log('Database connected'))
   .catch(err => console.error('Database connection failed:', err));
 
-// Callback Login (precisa rodar antes de sessaoData, que exige sessão já existente)
-app.use('/callback', callbackRouter);
-
-// API Routes
-app.use('/api', apiRouter);
-
-// View routes
-app.use('/', sessaoData, indexRouter);
+// Rotas (tudo centralizado em routes/api.js)
+app.use('/', routes);
 
 // Catch 404
 app.use((req, res, next) => {
