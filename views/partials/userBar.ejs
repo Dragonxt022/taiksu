@@ -1,0 +1,63 @@
+<% 
+const data = new Date().getHours();
+const dataHoje = new Date();
+
+let saudacao;
+
+if (data >= 6 && data < 12) {
+    saudacao = 'Bom dia';
+} else if (data >= 12 && data < 18) {
+    saudacao = 'Boa tarde';
+} else {
+    saudacao = 'Boa noite';
+}
+
+%>    
+    
+    <!--Foto, nome e notificações-->
+    <div id="user-bar" class="w-full">
+        <div class="w-full flex flex-row justify-between items-center">
+            <div id="perfil" class="flex flex-row justify-start items-center gap-5 mb-4 cursor-pointer group">
+
+                <div class="flex flex-col gap-0">
+                    <h3 id="saudacao" class="text-gray-600 text-md font-semibold transition-colors duration-300">
+                    <%= saudacao %>, <span id="username" class="text-green-700"><%= userNome.split(' ')[0] %></span>
+                    </h3>
+                    <span id="subtitle" class="text-gray-400 font-medium text-sm">
+                    Comida que alimenta a alma.
+                    </span>
+                </div>
+            </div>
+            <div class="flex flex-row gap-3 items-center">
+                    <a href="https://login.taiksu.com.br/?redirect_uri=https%3A%2F%2Fajuda.taiksu.com.br%2Fcallback">
+                        <img id="ajuda-icon" src="/images/icons/ajuda.png"
+                            class="h-7 w-7" />
+                    </a>
+            </div>
+        </div>
+
+        <!--Barra de pesquisa-->
+        <div class="relative mt-4 mb-6">
+            <img src="/images/icons/pesquisa.png" class="w-5 h-5 absolute inset-y-0 left-3 my-auto pointer-events-none">
+            <input type="search" placeholder="Pesquisar aplicativo" class="w-full bg-white pl-10 p-2 outline-none ring-1 ring-gray-300 focus:ring-green-500 focus:shadow-lg/10 rounded-full shadow-md/5 hover:ring-green-400 transition-all duration-300" id="search" onkeyup="filtraApps()">
+        </div>
+    </div>
+
+<script>
+    function filtraApps() {
+        const searchInput = document.getElementById("search");
+        const filter = searchInput.value.toLowerCase();
+        const cards = document.getElementById("aplicativos");
+        const appNames = cards.getElementsByTagName("a");
+        const temperatura = document.getElementById("temperatura");
+
+        for (let i = 0; i < appNames.length; i++) {
+            const appName = appNames[i];
+            if (appName.textContent.toLowerCase().includes(filter)) {
+                appName.style.display = "block";
+            } else {
+                appName.style.display = "none";
+            }
+        }
+    }
+</script>

@@ -1,0 +1,132 @@
+<div class="p-8 bg-white w-full mb-32">
+    <div class="max-w-6xl w-full mx-auto my-14">
+
+        <div class="flex flex-row items-center gap-3">
+            <button id="estoque" class="button-apps rounded-full px-6 py-2 text-sm text-gray-700 font-medium bg-gray-200 transition-colors duration-200 cursor-pointer">
+                Estoque
+            </button>
+            <button id="produtividade" class="button-apps rounded-full px-6 py-2 text-sm text-gray-700 font-medium bg-gray-200 transition-colors duration-200 cursor-pointer">
+                Produtividade
+            </button>
+            <button id="financas" class="button-apps rounded-full px-6 py-2 text-sm text-gray-700 font-medium bg-gray-200 transition-colors duration-200 cursor-pointer">
+                Finanças
+            </button>
+            <button id="comunidade" class="button-apps rounded-full px-6 py-2 text-sm text-gray-700 font-medium bg-gray-200 transition-colors duration-200 cursor-pointer">
+                Comunidade
+            </button>
+        </div>
+
+        <h4 id="titulo-estoque" class="text-4xl font-semibold my-8"><span class="text-green-900">Estoque.</span> <span class="text-gray-500">Nunca falta nada.</span></h4>
+        <h4 id="titulo-comunidade" class="hidden text-4xl font-semibold my-8"><span class="text-green-900">Comunidade.</span> <span class="text-gray-500">Quem corre contigo.</span></h4>
+        <h4 id="titulo-produtividade" class="hidden text-4xl font-semibold my-8"><span class="text-green-900">Produtividade.</span> <span class="text-gray-500">Faça mais fácil.</span></h4>
+        <h4 id="titulo-financas" class="hidden text-4xl font-semibold my-8"><span class="text-green-900">Finanças.</span> <span class="text-gray-500">Veja o seu dinheiro.</span></h4>
+
+
+        <div id="cards-estoque" class="flex flex-row items-center gap-8 min-h-[50vh]">
+            <div class="w-[380px] flex flex-col items-start overflow-hidden">
+                <img src="/images/comercial/compras.png" class="w-full rounded-3xl border border-gray-200">
+                <div class="p-1 mt-2 flex flex-col gap-3 items-start w-full">
+                    <h3 class="text-2xl text-gray-700 font-bold text-left w-full">Fornecedores parceiros</h3>
+                    <p class="text-md text-gray-500 text-left w-full">Tenha acesso à lista de fornecedores<br> homologados pela plataforma, garantindo <br>qualidade e confiabilidade nos produtos.</p>
+                </div>
+            </div>
+            <div class="w-[380px] flex flex-col items-start">
+                <img src="/images/comercial/quantidade.png" class="w-full rounded-3xl border border-gray-200">
+                <div class="p-1 mt-2 flex flex-col gap-3 items-start w-full">
+                    <h3 class="text-2xl text-gray-700 font-bold text-left w-full">Não perca a conta</h3>
+                    <p class="text-md text-gray-500 text-left w-full">Saiba exatamente a quantidade 3 valor<br> total de cada insumo a qualquer momento<br> independente de onde esteja.</p>
+                </div>
+            </div>
+            <div class=" w-[380px] flex flex-col items-start">
+                <img src="/images/comercial/quantidade.png" class="w-full rounded-3xl border border-gray-200">
+                <div class="p-1 mt-2 flex flex-col gap-3 items-start w-full">
+                    <h3 class="text-2xl text-gray-700 font-bold text-left w-full">Não perca a conta</h3>
+                    <p class="text-md text-gray-500 text-left w-full">Saiba exatamente a quantidade e valor<br> total de cada insumo a qualquer momento<br> independente de onde esteja.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="cards-comunidade" class="hidden flex flex-row items-center gap-8 min-h-[20vh]">
+            <div class="bg-green-300 rounded-3xl h-[520px] w-[380px] text-center flex flex-col justify-center">
+                card comunidade 1
+            </div>
+            <div class="bg-green-300 rounded-3xl h-[520px] w-[380px] text-center flex flex-col justify-center">
+                card comunidade 2
+            </div>
+            <div class="bg-green-300 rounded-3xl h-[520px] w-[380px] text-center flex flex-col justify-center">
+                card comunidade 3
+            </div>
+        </div>
+
+        <div id="cards-produtividade" class="hidden flex flex-row items-center gap-8 min-h-[20vh]">
+            <div class="bg-green-300 rounded-3xl h-[520px] w-[380px] text-center flex flex-col justify-center">
+                card produtividade 1
+            </div>
+            <div class="bg-green-300 rounded-3xl h-[520px] w-[380px] text-center flex flex-col justify-center">
+                card produtividade 2
+            </div>
+            <div class="bg-green-300 rounded-3xl h-[520px] w-[380px] text-center flex flex-col justify-center">
+                card produtividade 3
+            </div>
+        </div>
+
+        <div id="cards-financas" class="hidden flex flex-row items-center gap-8 min-h-[20vh]">
+            <div class="bg-green-300 rounded-3xl h-[520px] w-[380px] text-center flex flex-col justify-center">
+                card financas 1
+            </div>
+            <div class="bg-green-300 rounded-3xl h-[520px] w-[380px] text-center flex flex-col justify-center">
+                card financas 2
+            </div>
+            <div class="bg-green-300 rounded-3xl h-[520px] w-[380px] text-center flex flex-col justify-center">
+                card financas 3
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const openerButtons = document.querySelectorAll(".button-apps")
+
+    openerButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const categoria = button.getAttribute("id")
+            const titulo = document.getElementById(`titulo-${categoria}`)
+            const cards = document.getElementById(`cards-${categoria}`)
+            
+            // Oculta todos os outros titulos e exibe somente o atual
+            openerButtons.forEach(b => {
+                document.getElementById(`titulo-${b.getAttribute("id")}`).classList.add("hidden")
+            })
+            titulo.classList.remove("hidden")
+
+            // Remove cor de todos os botões
+            openerButtons.forEach(b => {
+                b.classList.remove("bg-gray-800")
+                b.classList.remove("text-white")
+                b.classList.add("bg-gray-200")
+                b.classList.add("text-gray-600")
+            })
+
+            // Adiciona cor ao botão atual
+            button.classList.remove("bg-gray-200")
+            button.classList.remove("text-gray-600")
+            button.classList.add("bg-gray-800")
+            button.classList.add("text-white")
+
+            // Oculta todos os outros cards e exibe somente o atual
+            openerButtons.forEach(b => {
+                document.getElementById(`cards-${b.getAttribute("id")}`).classList.add("hidden")
+            })
+            cards.classList.remove("hidden")
+            
+        });
+    });
+
+    const botaoEstoque = document.getElementById("estoque")
+    // clica no bota estoque pra iniciar com estoque selecionado
+    botaoEstoque.click();
+});
+</script>

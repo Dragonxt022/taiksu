@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <meta name="theme-color" content="#2c8516ff" />
+    <link rel="shortcut icon" href="https://login.taiksu.com.br/frontend/img/favicone.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/tailwind.css?v=001">
+    <link href="/stylesheets/global.css?v023" rel="stylesheet">
+</head>
+
+<%- include('../partials/header')%>
+
+    <body class="max-w-4xl min-h-screen mx-auto flex flex-col items-center w-full mt-26 px-4 md:px-8 overflow-auto">
+        <main class="p-2 mb-16 mx-auto w-full">
+            <%- body %>
+        </main>
+    </body>
+</html>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const body = document.body;
+    const header = document.getElementById('header');
+    const logo = document.getElementById('logo');
+    const saudacao = document.getElementById('saudacao');
+    const username = document.getElementById('username');
+    const ajudaIcon = document.getElementById('ajuda-icon');
+    const hora = new Date().getHours();
+    const userGrupo = <%=userGrupo %>;
+    let background = '#F3F8F3';
+
+    if (hora < 20) { // Modo noite somente depois das 20h
+        background = '#F3F8F3';
+        document.body.style.backgroundImage = "url('/images/lighter.png')";
+    } else {
+        background = '#212621';
+        document.body.style.backgroundImage = "url('/images/back.png')";
+        document.body.style.backgroundAttachment = "fixed";
+        document.body.style.backgroundSize = "cover";
+        document.body.style.backgroundPosition = "right";
+        document.body.style.backgroundRepeat = "no-repeat";
+        header.classList.remove('bg-white/80');
+        header.classList.add('bg-white/30');
+        saudacao.classList.add('text-white')
+        username.classList.add('text-green-500')
+        username.classList.remove('text-green-700');
+        ajudaIcon.classList.add('invert')
+        header.addEventListener('mousemove', (e) => {
+            const rect = header.getBoundingClientRect();
+            header.style.setProperty('--x', `${e.clientX - rect.left}px`);
+            header.style.setProperty('--y', `${e.clientY - rect.top}px`);
+        });
+
+    }
+    body.style.backgroundColor = background;
+    body.style.backgroundAttachment = 'fixed';
+    body.style.backgroundRepeat = 'no-repeat';
+    
+})
+</script>

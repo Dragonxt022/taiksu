@@ -1,0 +1,44 @@
+<style>
+  taiksu-chat-widget {
+    z-index: 2147483647 !important;
+  }
+</style>
+
+<script data-cfasync="false" src="https://chat.taiksu.com.br/js/taiksu-widget-component.js"></script>
+
+<script>
+  (function () {
+    const chatServerUrl = String("https://chat.taiksu.com.br");
+    const rawToken = String(<%- JSON.stringify(userToken || "") %>).trim();
+    const token = rawToken.replace(/^Bearer\s+/i, "").trim();
+    const externalUserId = String(<%- JSON.stringify(user_id || "") %>).trim();
+    const groupId = Number(<%- JSON.stringify(userGrupo || 0) %>);
+    const canUseSupportInbox = [2, 5, 13].includes(groupId);
+    const chatUserName = String(<%- JSON.stringify(userNome || "Usuário") %>).trim() || "Usuário";
+    const clientAppId = String("office");
+    const clientAppName = String("office");
+    const isJwtLike = /^[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+$/.test(token);
+    const canRenderChat = token !== "" && isJwtLike && externalUserId !== "";
+
+    if (!canRenderChat) {
+      return;
+    }
+
+    const widget = document.createElement("taiksu-chat-widget");
+    widget.setAttribute("server-url", chatServerUrl);
+    widget.setAttribute("client-app-id", clientAppId);
+    widget.setAttribute("client-app-name", clientAppName);
+    widget.setAttribute("external-user-id", externalUserId);
+    widget.setAttribute("auth-token", token);
+    widget.setAttribute("user-name", chatUserName);
+    widget.setAttribute("title", "Atendimento");
+    widget.setAttribute("auto-open", "false");
+    widget.setAttribute("mode", "floating");
+    widget.setAttribute("position", "bottom-right");
+    if (canUseSupportInbox) {
+      widget.setAttribute("support-inbox", "true");
+    }
+    widget.style.zIndex = "2147483647";
+    document.body.appendChild(widget);
+  })();
+</script>
