@@ -42,8 +42,8 @@
     <% } %>
   </div>
 
-  <!-- Permissões de Acesso -->
-   <% if (userGrupo == 5) { %>
+  <!-- Permissões de Acesso: visível apenas para os cargos em ACESSO_ROLES (homeController) -->
+   <% if (typeof podeGerenciarAcesso !== 'undefined' && podeGerenciarAcesso) { %>
     <p class="text-sm text-gray-500 mt-2 px-1">Permissões de Acesso</p>
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 px-5 divide-y divide-gray-100">
       <% if (typeof permissoes !== 'undefined' && permissoes) { %>

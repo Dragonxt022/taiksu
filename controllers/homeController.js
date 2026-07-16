@@ -3,6 +3,7 @@ const profileService = require('../services/profileService');
 // Mesmas regras dos seletores da página de perfil do SSO.
 const UNIDADE_ROLES = ['Desenvolvedor', 'Franqueadora', 'Recursos Humanos'];
 const CARGO_ROLES = ['Desenvolvedor'];
+const ACESSO_ROLES = ['Desenvolvedor', 'Franqueadora', 'Franqueado', 'Gerente'];
 
 const getExpressVersion = () => {
   try {
@@ -35,6 +36,7 @@ async function index(req, res) {
 async function editar(req, res) {
   const cargo = res.locals.userCargo;
   const podeTrocarCargo = CARGO_ROLES.includes(cargo);
+  const podeGerenciarAcesso = ACESSO_ROLES.includes(cargo);
 
   // Catálogo de permissões gerenciáveis: se o SSO negar (403) ou falhar,
   // a página cai no modo somente leitura (exibe só as permissões atuais).
@@ -45,6 +47,7 @@ async function editar(req, res) {
 
   res.render('editar', {
     title: 'Taiksu - Editar Perfil',
+    podeGerenciarAcesso,
     permissoes: Array.isArray(permissoes) ? permissoes : null,
     cargos: Array.isArray(cargos) ? cargos : null,
   });
