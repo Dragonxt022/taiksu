@@ -32,9 +32,21 @@ async function index(req, res) {
   });
 }
 
-function editar(req, res) {
+async function editar(req, res) {
+  const cargo = res.locals.userCargo;
+  const podeTrocarCargo = CARGO_ROLES.includes(cargo);
+
+  // Catálogo de permissões gerenciáveis: se o SSO negar (403) ou falhar,
+  // a página cai no modo somente leitura (exibe só as permissões atuais).
+  const [permissoes, cargos] = await Promise.all([
+    profileService.getPermissions(req.session).catch(() => null),
+    podeTrocarCargo ? profileService.getRoles(req.session).catch(() => null) : null,
+  ]);
+
   res.render('editar', {
     title: 'Taiksu - Editar Perfil',
+    permissoes: Array.isArray(permissoes) ? permissoes : null,
+    cargos: Array.isArray(cargos) ? cargos : null,
   });
 }
 
